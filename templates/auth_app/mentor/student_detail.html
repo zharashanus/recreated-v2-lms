@@ -1,0 +1,57 @@
+{% extends 'auth_app/base.html' %}
+
+{% block title %}Информация о студенте{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if student.avatar %}
+                        <img src="{{ student.avatar.url }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-secondary mb-3 mx-auto" style="width: 150px; height: 150px;"></div>
+                    {% endif %}
+                    <h4>{{ student.first_name }} {{ student.last_name }}</h4>
+                    <p class="text-muted">Группа: {{ student.group.name }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Информация о студенте</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Возраст:</dt>
+                        <dd class="col-sm-9">{{ student.age }}</dd>
+                        <dt class="col-sm-3">Контактное лицо:</dt>
+                        <dd class="col-sm-9">{{ student.contact_name }}</dd>
+                        <dt class="col-sm-3">Контактный номер:</dt>
+                        <dd class="col-sm-9">{{ student.contact_number }}</dd>
+                        <dt class="col-sm-3">Статус оплаты:</dt>
+                        <dd class="col-sm-9">{{ student.get_payment_status_display }}</dd>
+                    </dl>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Достижения</h5>
+                </div>
+                <div class="card-body">
+                    {% if student.achievements.all %}
+                        {% for achievement in student.achievements.all %}
+                            <span class="badge bg-success me-2 mb-2">{{ achievement.name }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted mb-0">Нет достижений</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

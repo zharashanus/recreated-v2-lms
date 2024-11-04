@@ -1,0 +1,38 @@
+{% extends 'auth_app/base.html' %}
+
+{% block title %}Мои достижения{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Мои достижения</h5>
+                </div>
+                <div class="card-body">
+                    {% if achievements %}
+                        <div class="row">
+                            {% for achievement in achievements %}
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ achievement.achievement.name }}</h5>
+                                            <p class="card-text">{{ achievement.achievement.description }}</p>
+                                            <p class="text-muted mb-0">
+                                                <small>Получено: {{ achievement.date_awarded|date:"d.m.Y" }}</small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">У вас пока нет достижений</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

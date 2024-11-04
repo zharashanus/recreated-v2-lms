@@ -1,0 +1,92 @@
+{% extends 'auth_app/base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    {% if student.avatar %}
+                        <img src="{{ student.avatar.url }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-secondary mb-3 mx-auto" style="width: 150px; height: 150px;"></div>
+                    {% endif %}
+                    <h4>{{ student.first_name }} {{ student.last_name }}</h4>
+                    <p class="text-muted">Группа: {{ student.group.name|default:"Не назначена" }}</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Статус обучения</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Прогресс</span>
+                        <span class="badge bg-primary">{{ student.progress.progress_percentage }}%</span>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: 50%;" 
+                             aria-valuenow="50" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            50%
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Статус оплаты</span>
+                        <span class="badge {% if student.payment_status == 'PAID' %}bg-success{% else %}bg-warning{% endif %}">
+                            {{ student.get_payment_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Успеваемость</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <h6>Поведение</h6>
+                            <h3>{{ student.grade.behaviour }}/5</h3>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <h6>Мотивация</h6>
+                            <h3>{{ student.grade.motivation }}/5</h3>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <h6>Активность</h6>
+                            <h3>{{ student.grade.activities }}/5</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Достижения</h5>
+                </div>
+                <div class="card-body">
+                    {% if student.student_achievements.all %}
+                        {% for achievement in student.student_achievements.all %}
+                            <div class="alert alert-success mb-2">
+                                <h6 class="mb-1">{{ achievement.achievement.name }}</h6>
+                                <small>Получено: {{ achievement.date_awarded }}</small>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted mb-0">Пока нет достижений</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,48 @@
+{% extends 'auth_app/base.html' %}
+
+{% block title %}Мои оценки{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Мои оценки</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6>Поведение</h6>
+                                    <h2>{{ grade.behaviour }}/5</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6>Мотивация</h6>
+                                    <h2>{{ grade.motivation }}/5</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6>Активность</h6>
+                                    <h2>{{ grade.activities }}/5</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <h4>Средний балл: {{ grade.average_grade|floatformat:1 }}/5</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
