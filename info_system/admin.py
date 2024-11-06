@@ -26,13 +26,13 @@ class GradeAdmin(admin.ModelAdmin):
     get_student_name.short_description = 'Student'
 
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ['student', 'get_schedule', 'date', 'status']
+    list_display = ['student', 'get_lesson', 'date', 'status']
     list_filter = ['student__group', 'date', 'status']
     search_fields = ['student__first_name', 'student__last_name']
 
-    def get_schedule(self, obj):
-        return obj.lesson.schedule if obj.lesson else '-'
-    get_schedule.short_description = 'Schedule'
+    def get_lesson(self, obj):
+        return f"{obj.lesson.get_day_of_week_display()} {obj.lesson.start_time}-{obj.lesson.end_time}" if obj.lesson else '-'
+    get_lesson.short_description = 'Расписание'
 
     def get_urls(self):
         from django.urls import path

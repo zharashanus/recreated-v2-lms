@@ -21,6 +21,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
     function updateAttendance(element, studentId, date, lessonId, status) {
         fetch('/api/attendance/update/', {
             method: 'POST',
@@ -40,22 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 const icon = element.querySelector('i');
                 icon.className = `fas fa-circle status-${status}`;
+            } else {
+                alert('Ошибка при обновлении посещаемости');
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ошибка при обновлении посещаемости');
         });
-    }
-    
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
     }
 }); 

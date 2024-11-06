@@ -102,19 +102,20 @@ def attendance_view(request):
 
 @require_POST
 def update_attendance(request):
-    data = json.loads(request.body)
-    student_id = data.get('student_id')
-    schedule_id = data.get('schedule_id')
-    date = data.get('date')
-    status = data.get('status')
-    
     try:
+        data = json.loads(request.body)
+        student_id = data.get('student_id')
+        date = data.get('date')
+        lesson_id = data.get('lesson_id')
+        status = data.get('status')
+        
         attendance, created = Attendance.objects.update_or_create(
             student_id=student_id,
-            schedule_id=schedule_id,
+            lesson_id=lesson_id,
             date=date,
             defaults={'status': status}
         )
+        
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
