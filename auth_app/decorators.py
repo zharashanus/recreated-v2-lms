@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import redirect
+from django.core.exceptions import PermissionDenied
 
 def manager_required(function):
     def wrap(request, *args, **kwargs):
@@ -10,9 +11,10 @@ def manager_required(function):
 
 def mentor_required(function):
     def wrap(request, *args, **kwargs):
-        if hasattr(request.user, 'mentor_profile'):
+        if request.user.is_authenticated and hasattr(request.user, 'mentor_profile'):
             return function(request, *args, **kwargs)
-        return redirect('login')
+        else:
+            return redirect('login')
     return wrap
 
 def student_required(function):

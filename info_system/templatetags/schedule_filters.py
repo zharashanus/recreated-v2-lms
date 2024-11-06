@@ -14,3 +14,7 @@ def get_attendance_status_class(status):
         'none': 'text-secondary'    # Не отмечено - серый
     }
     return status_classes.get(status, 'text-secondary')
+
+@register.filter
+def get_attendance_status(attendance_dict, date):
+    return attendance_dict.get(date, 'none')

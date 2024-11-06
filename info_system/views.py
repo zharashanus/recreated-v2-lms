@@ -13,15 +13,32 @@ from django.views.generic import TemplateView
 
 @login_required
 def attendance_view(request):
-    template_name = 'info_system/attendance.html'
+    # Проверка на право доступа
+    if not (hasattr(request.user, 'mentor_profile') or 
+            hasattr(request.user, 'manager_profile') or 
+            request.user.is_superuser):
+        return HttpResponseForbidden("Access denied")
     
-    # Добавим отладочную информацию
+    # Проверяем роль пользователя и выбираем соответствующий шаблон
+    if hasattr(request.user, 'mentor_profile'):
+        template_name = 'auth_app/mentor/attendance.html'
+    elif hasattr(request.user, 'manager_profile') or request.user.is_superuser:
+        template_name = 'info_system/attendance.html'
+    else:
+        return HttpResponseForbidden("Access denied")
+    
     print("Debug: Starting attendance_view")
     
-    if hasattr(request.user, 'mentor'):
-        groups = request.user.mentor.groups.all()
-    else:
+    # Проверяем роль пользователя
+    if hasattr(request.user, 'mentor_profile'):
+        # Для ментора показываем только его группы
+        groups = request.user.mentor_profile.groups.all()
+    elif hasattr(request.user, 'manager_profile') or request.user.is_superuser:
+        # Для менеджера и суперпользователя показываем все группы
         groups = Group.objects.all()
+    else:
+        # Для остальных пользователей пустой QuerySet
+        groups = Group.objects.none()
     
     print(f"Debug: Found {groups.count()} groups")
     

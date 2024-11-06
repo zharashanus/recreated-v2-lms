@@ -1,4 +1,4 @@
-{% extends 'auth_app/base.html' %}
+{% extends 'auth_app/mentor/mentor_base.html' %}
 
 {% block title %}Студенты{% endblock %}
 
@@ -15,7 +15,7 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="groupFilterDropdown">
                             <li><a class="dropdown-item" href="{% url 'mentor_students' %}">Все группы</a></li>
-                            {% for group in request.user.mentor_profile.assigned_groups.all %}
+                            {% for group in request.user.mentor_profile.groups.all %}
                                 <li><a class="dropdown-item" href="{% url 'mentor_students' %}?group={{ group.id }}">{{ group.name }}</a></li>
                             {% endfor %}
                         </ul>

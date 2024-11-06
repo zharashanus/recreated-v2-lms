@@ -47,26 +47,29 @@ def main_page(request):
     return render(request, 'auth_app/main_page.html')
 
 @login_required
+@mentor_required
 def mentor_dashboard(request):
     mentor = request.user.mentor_profile
     groups = mentor.groups.all()
     return render(request, 'auth_app/mentor/dashboard.html', {'groups': groups})
 
 @login_required
+@mentor_required
 def mentor_groups(request):
     mentor = request.user.mentor_profile
     groups = mentor.groups.all()
     return render(request, 'auth_app/mentor/groups.html', {'groups': groups})
 
 @login_required
+@mentor_required
 def mentor_students(request):
     mentor = request.user.mentor_profile
     group_id = request.GET.get('group')
     
     if group_id:
-        students = StudentUser.objects.filter(group__in=mentor.mentored_groups.all(), group_id=group_id)
+        students = StudentUser.objects.filter(group__in=mentor.groups.all(), group_id=group_id)
     else:
-        students = StudentUser.objects.filter(group__in=mentor.mentored_groups.all())
+        students = StudentUser.objects.filter(group__in=mentor.groups.all())
     
     return render(request, 'auth_app/mentor/students.html', {'students': students})
 
@@ -265,3 +268,22 @@ def student_detail(request, student_id):
         'student': student,
     }
     return render(request, 'auth_app/mentor/student_detail.html', context)
+
+@login_required
+@mentor_required
+def mentor_attendance(request):
+    mentor = request.user.mentor_profile
+    groups = mentor.groups.all()
+    selected_group = None
+    group_id = request.GET.get('group')
+    
+    if group_id:
+        selected_group = get_object_or_404(Group, id=group_id)
+        if selected_group not in groups:
+            return HttpResponseForbidden()
+    
+    context = {
+        'groups': groups,
+        'selected_group': selected_group
+    }
+    return render(request, 'auth_app/mentor/attendance.html', context)

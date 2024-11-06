@@ -1,0 +1,28 @@
+{% extends 'auth_app/base.html' %}
+
+{% block navbar_items %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'manager_dashboard' %}">
+            <i class="fas fa-home"></i>
+            <span>Панель управления</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'manage_students' %}">
+            <i class="fas fa-user-graduate"></i>
+            <span>Студенты</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'manage_mentors' %}">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span>Менторы</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'manage_groups' %}">
+            <i class="fas fa-users"></i>
+            <span>Группы</span>
+        </a>
+    </li>
+{% endblock %}
