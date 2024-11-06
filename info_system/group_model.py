@@ -3,7 +3,12 @@ from django.db import models
 class Group(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название группы')
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
-    mentor = models.ForeignKey('auth_app.Mentor', on_delete=models.SET_NULL, null=True, blank=True, related_name='mentored_groups', verbose_name='Ментор')
+    mentor = models.ManyToManyField(
+        'auth_app.Mentor',
+        related_name='groups',
+        blank=True,
+        verbose_name='Менторы'
+    )
     # TODO: Раскомментировать после добавления приложения code_tester
     # coding_tasks = models.ManyToManyField('code_tester.CodingTask', blank=True, related_name='assigned_groups', verbose_name='Задачи по программированию')
 
@@ -27,6 +32,7 @@ class LessonSchedule(models.Model):
     ], verbose_name='День недели')
     start_time = models.TimeField(verbose_name='Время начала')
     end_time = models.TimeField(verbose_name='Время окончания')
+    is_active = models.BooleanField(default=True, verbose_name='Активно')
 
     class Meta:
         verbose_name = 'Расписание урока'

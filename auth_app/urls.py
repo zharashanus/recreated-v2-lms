@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from info_system.views import attendance_view, update_attendance
 
 urlpatterns = [
     path('login/', views.login_view, name='login'),
@@ -13,10 +14,13 @@ urlpatterns = [
     path('manager/mentor/<int:mentor_id>/update-report/', views.update_mentor_report, name='update_mentor_report'),
     path('manager/groups/', views.manage_groups, name='manage_groups'),
     path('manager/group/<int:group_id>/', views.group_detail, name='group_detail'),
+    path('manager/attendance/', attendance_view, name='manager_attendance'),
+    path('manager/update-attendance/', update_attendance, name='manager_update_attendance'),
     
     # Mentor URLs
     path('mentor/dashboard/', views.mentor_dashboard, name='mentor_dashboard'),
-    path('mentor/attendance/<int:student_id>/', views.update_attendance, name='update_attendance'),
+    path('mentor/attendance/', attendance_view, name='mentor_attendance'),
+    path('mentor/update-attendance/', update_attendance, name='mentor_update_attendance'),
     path('mentor/grades/<int:student_id>/', views.update_grades, name='update_grades'),
     path('mentor/groups/', views.mentor_groups, name='mentor_groups'),
     path('mentor/students/', views.mentor_students, name='mentor_students'),

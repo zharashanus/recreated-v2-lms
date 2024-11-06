@@ -1,0 +1,58 @@
+{% extends 'auth_app/base.html' %}
+
+{% block title %}Мои группы{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Список моих групп</h5>
+                </div>
+                <div class="card-body">
+                    {% if groups %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Название группы</th>
+                                        <th>Количество студентов</th>
+                                        <th>Расписание</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for group in groups %}
+                                        <tr>
+                                            <td>{{ group.name }}</td>
+                                            <td>{{ group.studentuser_set.count }}</td>
+                                            <td>
+                                                {% for schedule in group.lesson_schedules.all %}
+                                                    <div class="small">
+                                                        {{ schedule.get_day_of_week_display }}: {{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}
+                                                    </div>
+                                                {% empty %}
+                                                    <span class="text-muted">Расписание не составлено</span>
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'mentor_students' %}?group={{ group.id }}" class="btn btn-sm btn-primary">Студенты</a>
+                                                <a href="{% url 'mentor_attendance' %}?group={{ group.id }}" class="btn btn-sm btn-info">Посещаемость</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">У вас нет назначенных групп</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,94 @@
+{% extends 'auth_app/base.html' %}
+
+{% block title %}Управление менторами{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Список менторов</h5>
+                </div>
+                <div class="card-body">
+                    {% if mentors %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Фото</th>
+                                        <th>Имя</th>
+                                        <th>Фамилия</th>
+                                        <th>Специализация</th>
+                                        <th>Опыт (лет)</th>
+                                        <th>Статус отчета</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for mentor in mentors %}
+                                        <tr>
+                                            <td>
+                                                {% if mentor.avatar %}
+                                                    <img src="{{ mentor.avatar.url }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="rounded-circle bg-secondary" style="width: 40px; height: 40px;"></div>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ mentor.first_name }}</td>
+                                            <td>{{ mentor.last_name }}</td>
+                                            <td>{{ mentor.specialization }}</td>
+                                            <td>{{ mentor.experience_years }}</td>
+                                            <td>
+                                                <span class="badge {% if mentor.report_status == 'REPORTED' %}bg-success{% else %}bg-warning{% endif %}">
+                                                    {{ mentor.get_report_status_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary update-report" 
+                                                        data-mentor-id="{{ mentor.id }}"
+                                                        data-current-status="{{ mentor.report_status }}">
+                                                    Изменить статус
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Менторы не найдены</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.update-report').forEach(button => {
+    button.addEventListener('click', function() {
+        const mentorId = this.dataset.mentorId;
+        const currentStatus = this.dataset.currentStatus;
+        const newStatus = currentStatus === 'REPORTED' ? 'UNREPORTED' : 'REPORTED';
+        
+        fetch(`/manager/mentor/${mentorId}/update-report/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `report_status=${newStatus}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

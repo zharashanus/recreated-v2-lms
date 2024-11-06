@@ -4,7 +4,7 @@ from django.urls import reverse
 class LoginRequiredMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.exempt_urls = [reverse('login'), '/admin/', '/static/']
+        self.exempt_urls = [reverse('login'), '/admin/', '/static/', 'next']
 
     def __call__(self, request):
         if not request.user.is_authenticated:

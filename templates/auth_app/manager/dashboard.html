@@ -32,6 +32,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Посещаемость</h5>
+                    <h2 class="display-4"><i class="fas fa-calendar-check"></i></h2>
+                    <a href="{% url 'manager_attendance' %}" class="text-white">Подробнее →</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="card">
@@ -56,7 +65,7 @@
                             <td>{{ group.name }}</td>
                             <td>{{ group.studentuser_set.count }}</td>
                             <td>
-                                {% for mentor in group.assigned_mentors.all %}
+                                {% for mentor in group.mentor.all %}
                                     <span class="badge bg-secondary">{{ mentor.first_name }} {{ mentor.last_name }}</span>
                                 {% endfor %}
                             </td>

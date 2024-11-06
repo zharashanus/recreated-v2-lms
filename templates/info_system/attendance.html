@@ -1,0 +1,129 @@
+{% extends 'auth_app/manager/base.html' %}
+{% load static %}
+{% load i18n %}
+{% load schedule_filters %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/attendance.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4">Посещаемость</h1>
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <form method="get" class="d-flex gap-2">
+                    <select name="group" class="form-select">
+                        <option value="">Выберите группу</option>
+                        {% for group in groups %}
+                        <option value="{{ group.id }}" {% if selected_group.id == group.id %}selected{% endif %}>
+                            {{ group.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </form>
+                
+                {% if selected_group %}
+                <!-- Debug info for dates -->
+                <div style="display:none">
+                    <p>Current Month: {{ current_month|date:"F Y" }}</p>
+                    <p>Prev Month: {{ prev_month|date:"F Y" }}</p>
+                    <p>Next Month: {{ next_month|date:"F Y" }}</p>
+                </div>
+                
+                <div class="month-navigation">
+                    <div class="month-nav-header">
+                        {% if current_month|date:"Y-m" < today|date:"Y-m" %}
+                            <div class="archive-badge">Архивная дата</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="month-nav-content">
+                        <a href="?group={{ selected_group.id }}&month={{ prev_month|date:'n' }}&year={{ prev_month|date:'Y' }}" 
+                           class="nav-arrow">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        
+                        <div class="current-month-display">
+                            {{ current_month|date:"F Y" }}
+                        </div>
+                        
+                        <a href="?group={{ selected_group.id }}&month={{ next_month|date:'n' }}&year={{ next_month|date:'Y' }}" 
+                           class="nav-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div class="month-nav-group">
+                    <div class="month-nav-title">Статистика месяца</div>
+                    <div class="month-nav-content">
+                        <div class="stats-list">
+                            <div class="stats-item">
+                                <span class="stats-label">Всего занятий:</span>
+                                <span class="stats-value">{{ dates_with_schedule|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if selected_group %}
+        <!-- Debug info for attendance data -->
+        <div style="display:none">
+            {% for student_data in students_attendance %}
+            <p>Student: {{ student_data.student.get_full_name }}</p>
+            <p>Attendance Records: {{ student_data.attendance }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Студент</th>
+                            {% for date_info in dates_with_schedule %}
+                            <th class="text-center">
+                                {{ date_info.weekday_name }}<br>
+                                {{ date_info.time }}<br>
+                                {{ date_info.date|date:"d.m.Y" }}
+                            </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student_data in students_attendance %}
+                        <tr>
+                            <td>{{ student_data.student.first_name }} {{ student_data.student.last_name }}</td>
+                            {% for date_info in dates_with_schedule %}
+                            <td class="text-center">
+                                <div class="attendance-status" 
+                                     data-student="{{ student_data.student.id }}"
+                                     data-date="{{ date_info.date|date:'Y-m-d' }}"
+                                     data-lesson="{{ date_info.lesson.id }}">
+                                    <i class="fas fa-circle status-{{ student_data.attendance|get_item:date_info.date }}"></i>
+                                </div>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/attendance.js' %}"></script>
+{% endblock %}

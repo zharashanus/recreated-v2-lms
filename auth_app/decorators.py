@@ -2,11 +2,11 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import redirect
 
 def manager_required(function):
-    def check_manager(user):
-        return hasattr(user, 'manager_profile')
-    
-    decorated_function = user_passes_test(check_manager)(function)
-    return decorated_function
+    def wrap(request, *args, **kwargs):
+        if request.user.is_authenticated and (hasattr(request.user, 'manager_profile') or request.user.is_superuser):
+            return function(request, *args, **kwargs)
+        return redirect('login')
+    return wrap
 
 def mentor_required(function):
     def wrap(request, *args, **kwargs):

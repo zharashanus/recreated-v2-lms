@@ -1,0 +1,94 @@
+{% extends 'auth_app/base.html' %}
+
+{% block title %}Управление студентами{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Список студентов</h5>
+                </div>
+                <div class="card-body">
+                    {% if students %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Фото</th>
+                                        <th>Имя</th>
+                                        <th>Фамилия</th>
+                                        <th>Группа</th>
+                                        <th>Возраст</th>
+                                        <th>Статус оплаты</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in students %}
+                                        <tr>
+                                            <td>
+                                                {% if student.avatar %}
+                                                    <img src="{{ student.avatar.url }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="rounded-circle bg-secondary" style="width: 40px; height: 40px;"></div>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ student.first_name }}</td>
+                                            <td>{{ student.last_name }}</td>
+                                            <td>{{ student.group.name|default:"Не назначена" }}</td>
+                                            <td>{{ student.age }}</td>
+                                            <td>
+                                                <span class="badge {% if student.payment_status == 'PAID' %}bg-success{% else %}bg-warning{% endif %}">
+                                                    {{ student.get_payment_status_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary update-payment" 
+                                                        data-student-id="{{ student.id }}"
+                                                        data-current-status="{{ student.payment_status }}">
+                                                    Изменить статус
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Студенты не найдены</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.update-payment').forEach(button => {
+    button.addEventListener('click', function() {
+        const studentId = this.dataset.studentId;
+        const currentStatus = this.dataset.currentStatus;
+        const newStatus = currentStatus === 'PAID' ? 'UNPAID' : 'PAID';
+        
+        fetch(`/manager/student/${studentId}/update-payment/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `payment_status=${newStatus}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

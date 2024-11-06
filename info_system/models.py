@@ -7,22 +7,37 @@ from django.utils.timezone import now
 from .group_model import Group, LessonSchedule
 
 class Attendance(models.Model):
-    student = models.ForeignKey('auth_app.StudentUser', on_delete=models.CASCADE, verbose_name='Студент', null=True)
-    lesson = models.ForeignKey(LessonSchedule, on_delete=models.CASCADE, verbose_name='Урок')
-    date = models.DateField(verbose_name='Дата', default=now)
-    status = models.CharField(max_length=10, choices=[
+    ATTENDANCE_STATUS = [
         ('present', 'Присутствовал'),
         ('absent', 'Отсутствовал'),
         ('none', 'Не отмечено')
-    ], default='none', verbose_name='Статус')
+    ]
+
+    student = models.ForeignKey(
+        'auth_app.StudentUser', 
+        on_delete=models.CASCADE, 
+        verbose_name='Студент',
+        null=True
+    )
+    lesson = models.ForeignKey(
+        'LessonSchedule', 
+        on_delete=models.CASCADE, 
+        verbose_name='Урок'
+    )
+    date = models.DateField(verbose_name='Дата', default=now)
+    status = models.CharField(
+        max_length=10, 
+        choices=ATTENDANCE_STATUS, 
+        default='none', 
+        verbose_name='Статус'
+    )
+    note = models.TextField(blank=True, null=True, verbose_name='Примечание')
 
     class Meta:
         verbose_name = 'Посещаемость'
         verbose_name_plural = 'Посещаемость'
         unique_together = ['student', 'lesson', 'date']
-
-    def __str__(self):
-        return f"{self.student.first_name} {self.student.last_name} - {self.lesson} - {self.date}"
+        ordering = ['-date']
 
 class Grade(models.Model):
     student = models.OneToOneField('auth_app.StudentUser', on_delete=models.CASCADE, verbose_name='Студент')
@@ -114,3 +129,20 @@ def create_grade_for_new_student(sender, instance, created, **kwargs):
 def create_progress_for_new_student(sender, instance, created, **kwargs):
     if created:
         Progress.objects.create(student=instance)
+
+class Schedule(models.Model):
+    group = models.ForeignKey('Group', on_delete=models.CASCADE, related_name='schedules')
+    day_of_week = models.IntegerField(choices=[
+        (0, 'Понедельник'),
+        (1, 'Вторник'),
+        (2, 'Среда'),
+        (3, 'Четверг'),
+        (4, 'Пятница'),
+        (5, 'Суббота'),
+        (6, 'Воскресенье'),
+    ])
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    class Meta:
+        ordering = ['day_of_week', 'start_time']

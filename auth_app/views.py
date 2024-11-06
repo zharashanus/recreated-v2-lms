@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 from django.http import HttpResponseForbidden
+from info_system.group_model import Group  # Импортируем нашу модель Group
 
 def login_view(request):
     if request.method == 'POST':
@@ -20,7 +21,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             if user.is_superuser:
-                return redirect('admin:index')
+                return redirect('manager_dashboard')
             elif hasattr(user, 'manager_profile'):
                 return redirect('manager_dashboard')
             elif hasattr(user, 'mentor_profile'):
@@ -45,19 +46,19 @@ def main_page(request):
         return redirect('mentor_dashboard')
     return render(request, 'auth_app/main_page.html')
 
-@mentor_required
+@login_required
 def mentor_dashboard(request):
     mentor = request.user.mentor_profile
     groups = mentor.groups.all()
     return render(request, 'auth_app/mentor/dashboard.html', {'groups': groups})
 
-@mentor_required
+@login_required
 def mentor_groups(request):
     mentor = request.user.mentor_profile
     groups = mentor.groups.all()
     return render(request, 'auth_app/mentor/groups.html', {'groups': groups})
 
-@mentor_required
+@login_required
 def mentor_students(request):
     mentor = request.user.mentor_profile
     group_id = request.GET.get('group')
@@ -118,9 +119,9 @@ def update_mentor_status(request, mentor_id):
             return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
-@user_passes_test(is_manager)
+@login_required
+@manager_required
 def manager_dashboard(request):
-    manager = request.user.manager_profile
     mentors = Mentor.objects.all()
     groups = Group.objects.all()
     students_count = StudentUser.objects.all().count()
@@ -133,17 +134,19 @@ def manager_dashboard(request):
     }
     return render(request, 'auth_app/manager/dashboard.html', context)
 
-@user_passes_test(is_manager)
+@login_required
+@manager_required
 def manage_students(request):
-    manager = request.user.manager_profile
-    students = StudentUser.objects.filter(group__manager=manager)
+    students = StudentUser.objects.all()
     return render(request, 'auth_app/manager/students.html', {'students': students})
 
-@user_passes_test(is_manager)
+@login_required
+@manager_required
 def manage_mentors(request):
     mentors = Mentor.objects.all()
     return render(request, 'auth_app/manager/mentors.html', {'mentors': mentors})
 
+@login_required
 @mentor_required
 def update_attendance(request, student_id):
     if request.method == 'POST':
@@ -162,6 +165,7 @@ def update_attendance(request, student_id):
             return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=403)
 
+@login_required
 @mentor_required
 def update_grades(request, student_id):
     if request.method == 'POST':
@@ -177,21 +181,7 @@ def update_grades(request, student_id):
             return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=403)
 
-@manager_required
-def manager_dashboard(request):
-    manager = request.user.manager_profile
-    mentors = Mentor.objects.all()
-    groups = Group.objects.all()
-    students_count = StudentUser.objects.all().count()
-    mentors_count = mentors.count()
-    
-    context = {
-        'groups': groups,
-        'students_count': students_count,
-        'mentors_count': mentors_count
-    }
-    return render(request, 'auth_app/manager/dashboard.html', context)
-
+@login_required
 @manager_required
 def update_student_payment(request, student_id):
     if request.method == 'POST':
@@ -203,6 +193,8 @@ def update_student_payment(request, student_id):
             return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
+
+@login_required
 @manager_required
 def update_mentor_report(request, mentor_id):
     if request.method == 'POST':
@@ -214,15 +206,16 @@ def update_mentor_report(request, mentor_id):
             return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
+
 @manager_required
 def manage_groups(request):
     groups = Group.objects.all()
     return render(request, 'auth_app/manager/groups.html', {'groups': groups})
-
 @manager_required
 def group_detail(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     students = StudentUser.objects.filter(group=group)
+    
     context = {
         'group': group,
         'students': students,

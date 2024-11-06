@@ -1,0 +1,67 @@
+{% extends 'auth_app/base.html' %}
+
+{% block title %}Информация о группе{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">{{ group.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Менторы группы:</h6>
+                    <div class="mb-3">
+                        {% for mentor in group.mentor.all %}
+                            <span class="badge bg-secondary me-2">{{ mentor.first_name }} {{ mentor.last_name }}</span>
+                        {% empty %}
+                            <p class="text-muted">Нет назначенных менторов</p>
+                        {% endfor %}
+                    </div>
+                    
+                    <h6>Студенты группы:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Фото</th>
+                                    <th>Имя</th>
+                                    <th>Фамилия</th>
+                                    <th>Возраст</th>
+                                    <th>Статус оплаты</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                    <tr>
+                                        <td>
+                                            {% if student.avatar %}
+                                                <img src="{{ student.avatar.url }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="rounded-circle bg-secondary" style="width: 40px; height: 40px;"></div>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ student.first_name }}</td>
+                                        <td>{{ student.last_name }}</td>
+                                        <td>{{ student.age }}</td>
+                                        <td>
+                                            <span class="badge {% if student.payment_status == 'PAID' %}bg-success{% else %}bg-warning{% endif %}">
+                                                {{ student.get_payment_status_display }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">В группе нет студентов</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

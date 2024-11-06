@@ -40,7 +40,7 @@
                                     <td>{{ group.studentuser_set.count }}</td>
                                     <td>
                                         <a href="{% url 'mentor_students' %}?group={{ group.id }}" class="btn btn-sm btn-info">Студенты</a>
-                                        <a href="#" class="btn btn-sm btn-primary">Посещаемость</a>
+                                        <a href="{% url 'mentor_attendance' %}?group={{ group.id }}" class="btn btn-sm btn-primary">Посещаемость</a>
                                     </td>
                                 </tr>
                                 {% empty %}

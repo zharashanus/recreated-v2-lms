@@ -46,7 +46,13 @@ class Mentor(models.Model):
         ('UNREPORTED', 'Отчет не сдан'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='mentor_profile')
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='mentor_profile'
+    )
     first_name = models.CharField(max_length=100, verbose_name='Имя:')
     last_name = models.CharField(max_length=100, verbose_name='Фамилия:')
     specialization = models.CharField(max_length=200, verbose_name='Специализация:')
@@ -58,11 +64,6 @@ class Mentor(models.Model):
         choices=REPORT_STATUS_CHOICES,
         default='UNREPORTED',
         verbose_name='Статус отчета'
-    )
-    groups = models.ManyToManyField('info_system.Group', 
-        blank=True, 
-        related_name='assigned_mentors',
-        verbose_name='Назначенные группы'
     )
 
     def avatar_tag(self):

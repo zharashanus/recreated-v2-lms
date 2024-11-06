@@ -1,0 +1,326 @@
+.attendance-status {
+    cursor: pointer;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+}
+
+.status-present { color: #28a745; }
+.status-absent { color: #dc3545; }
+.status-none { color: #6c757d; }
+
+/* Стили для навигации по месяцам */
+.month-selector {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: stretch;
+    margin: 20px 0;
+}
+
+.month-item {
+    flex: 1;
+    max-width: 250px;
+    text-decoration: none;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.month-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.month-content {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: white;
+}
+
+.month-info {
+    flex: 1;
+    text-align: center;
+}
+
+.month-status {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.month-date {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.fas {
+    font-size: 14px;
+}
+
+/* Архив */
+.month-item.archive {
+    border-color: #dc3545;
+}
+
+.month-item.archive .month-content {
+    color: #dc3545;
+}
+
+.month-item.archive:hover {
+    background: #dc3545;
+}
+
+.month-item.archive:hover .month-content {
+    color: white;
+}
+
+/* Текущий месяц */
+.month-item.current {
+    border-color: #28a745;
+}
+
+.month-item.current .month-content {
+    color: #28a745;
+}
+
+.month-item.current:hover {
+    background: #28a745;
+}
+
+.month-item.current:hover .month-content {
+    color: white;
+}
+
+/* Следующий месяц */
+.month-item.next {
+    border-color: #0d6efd;
+}
+
+.month-item.next .month-content {
+    color: #0d6efd;
+}
+
+.month-item.next:hover {
+    background: #0d6efd;
+}
+
+.month-item.next:hover .month-content {
+    color: white;
+}
+
+.month-navigation {
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin: 1rem 0;
+    padding: 1.5rem 0.5rem 0.5rem;
+}
+
+.month-nav-header {
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.archive-badge, .current-month-badge {
+    display: inline-block;
+    padding: 0.25rem 1rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: white;
+}
+
+.archive-badge {
+    background: #dc3545;
+}
+
+.current-month-badge {
+    display: inline-block;
+    padding: 0.25rem 1rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: white;
+    background: #28a745;
+}
+
+.month-nav-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.current-month-display {
+    font-size: 1.25rem;
+    font-weight: 500;
+    min-width: 150px;
+    text-align: center;
+    color: #198754;
+}
+
+/* Добавьте в контекст шаблона переменную today для сравнения дат */
+[data-archive="true"] .current-month-display {
+    --month-color: #dc3545;
+}
+
+.month-details {
+    text-align: center;
+}
+
+.month-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+}
+
+.month-value {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #198754;
+}
+
+.archive-months {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.archive-link {
+    text-decoration: none;
+    color: #dc3545;
+    padding: 0.25rem;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.archive-link:hover {
+    border-bottom-color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .month-navigation {
+        flex-direction: column;
+    }
+    
+    .month-nav-item {
+        min-width: 100%;
+    }
+}
+
+/* Month Navigation Styles */
+.month-navigation-wrapper {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.month-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.month-nav-group {
+    flex: 1;
+    max-width: 300px;
+}
+
+.month-nav-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6c757d;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.month-nav-content {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Archive Section */
+.archive-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.archive-link {
+    display: block;
+    padding: 0.5rem;
+    color: #6c757d;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.archive-link:hover {
+    background: #f8f9fa;
+    color: #dc3545;
+}
+
+/* Current Month Section */
+.current-month {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #198754;
+}
+
+/* Month Navigation Buttons */
+.month-nav-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.month-nav-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background: white;
+    color: #495057;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.month-nav-btn:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+    color: #212529;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .month-navigation {
+        flex-direction: column;
+    }
+    
+    .month-nav-group {
+        max-width: 100%;
+    }
+}

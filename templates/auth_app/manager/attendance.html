@@ -1,0 +1,62 @@
+{% extends 'auth_app/manager/base.html' %}
+{% load static %}
+{% load schedule_filters %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4">{{ selected_group.name }} - Посещаемость</h1>
+    
+    <div class="mb-4">
+        <a href="{% url 'manage_groups' %}" class="btn btn-outline-primary">
+            Назад к группам
+        </a>
+    </div>
+
+    {% if selected_group %}
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Студент</th>
+                    {% for date_info in dates_with_schedule %}
+                    <th class="text-center">
+                        {{ date_info.weekday_name }}<br>
+                        {{ date_info.time }}<br>
+                        {{ date_info.date|date:"d.m.Y" }}
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for student_data in students_attendance %}
+                <tr>
+                    <td>
+                        {% if student_data.student.avatar %}
+                            <img src="{{ student_data.student.avatar.url }}" class="rounded-circle" width="30" height="30">
+                        {% endif %}
+                        {{ student_data.student.get_full_name }}
+                    </td>
+                    {% for date_info in dates_with_schedule %}
+                    <td class="text-center">
+                        <div class="attendance-status" 
+                             data-student="{{ student_data.student.id }}"
+                             data-date="{{ date_info.date|date:'Y-m-d' }}"
+                             data-lesson="{{ date_info.lesson.id }}">
+                            {% with status=student_data.attendance|get_attendance_status:date_info.date %}
+                            <i class="fas fa-circle {{ status|get_attendance_status_class }}"></i>
+                            {% endwith %}
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/attendance.js' %}"></script>
+{% endblock %}
